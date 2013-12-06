@@ -1,0 +1,204 @@
+WITH
+MEMBER [Measures].[Parent Member] AS
+[Cars].[Country_model_hierarchy].CurrentMember.Parent.Name
+SELECT
+{[Measures].[Amount], [Measures].[Parent Member]} ON COLUMNS,
+[Cars].[Country_model_hierarchy].[Model] ON ROWS
+FROM
+[Car Transactions]
+
+
+WITH
+MEMBER [Measures].[Parent Member] AS
+[Cars].[Country_model_hierarchy].CurrentMember.Parent.Parent.Name
+SELECT
+{[Measures].[Amount], [Measures].[Parent Member]} ON COLUMNS,
+[Cars].[Country_model_hierarchy].[Model] ON ROWS
+FROM
+[Car Transactions]
+
+
+
+WITH
+MEMBER [Measures].[Parent Member] AS
+[Cars].[Country_model_hierarchy].CurrentMember.Parent.Name
+SELECT
+{[Measures].[Amount], [Measures].[Parent Member]} ON COLUMNS,
+[Cars].[Country_model_hierarchy].[Company] ON ROWS
+FROM
+[Car Transactions]
+
+
+
+WITH
+MEMBER [Measures].[Percent of Parent] AS
+([Cars].[Country_model_hierarchy].CurrentMember,
+[Measures].[Amount])
+/
+([Cars].[Country_model_hierarchy].CurrentMember.Parent.Parent,
+[Measures].[Amount]),
+format_string = 'Percent'
+SELECT
+{[Measures].[Amount], [Measures].[Percent of Parent]} ON COLUMNS,
+[Cars].[Country_model_hierarchy].[Model] ON ROWS
+FROM
+[Car Transactions]
+
+
+
+WITH
+MEMBER [Measures].[Sibling Rank] AS
+Rank(
+	[Cars].[Company_model_hierarchy].CurrentMember,
+	[Cars].[Company_model_hierarchy].CurrentMember.Siblings,
+	([Measures].[Amount])
+)
+SELECT
+{[Measures].[Amount], [Measures].[Sibling Rank]} ON COLUMNS,
+[Cars].[Company_model_hierarchy].[Company] ON ROWS
+FROM
+[Car Transactions]
+
+
+
+WITH
+MEMBER [Measures].[Percent of Ancestor] AS
+([Cars].[Company_model_hierarchy].CurrentMember,
+[Measures].[Amount])
+/
+(
+Ancestor
+	(	
+	[Cars].[Company_model_hierarchy].CurrentMember, 
+	[Cars].[Company_model_hierarchy].[Company]
+),
+[Measures].[Amount]),
+format_string = 'Percent'
+SELECT
+{[Measures].[Amount], [Measures].[Percent of Ancestor]} ON COLUMNS,
+[Cars].[Country_model_hierarchy].[Model] ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+[Cars].[Country_model_hierarchy].[Country].[USA].[Warren] ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+Ascendants ([Cars].[Country_model_hierarchy].[Country].[USA].[Warren]) ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+Hierarchize (Ascendants ([Cars].[Country_model_hierarchy].[Country].[USA].[Warren])) ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+[Cars].[Country_model_hierarchy].[Country].[USA] ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+Descendants ([Cars].[Country_model_hierarchy].[Country].[USA],
+[Cars].[Country_model_hierarchy].[City]) ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+Descendants ([Cars].[Country_model_hierarchy].[Country].[USA],
+[Cars].[Country_model_hierarchy].[Model]) ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+Descendants ([Cars].[Country_model_hierarchy].[Country].[USA], 2) ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+Descendants ([Cars].[Country_model_hierarchy].[Country].[USA], 2, AFTER) ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+Descendants ([Cars].[Country_model_hierarchy].[Country].[USA], 2, BEFORE) ON ROWS
+FROM
+[Car Transactions]
+
+
+
+SELECT
+[Measures].[Amount] ON COLUMNS,
+[Time].[Month].Members ON ROWS
+FROM
+[Car Transactions]
+
+
+
+WITH
+MEMBER [Measures].[Prev Period Amount] AS
+([Time].[Month].CurrentMember.PrevMember,
+[Measures].[Amount])
+SELECT
+{[Measures].[Amount], [Measures].[Prev Period Amount]} ON COLUMNS,
+[Time].[Month].Members ON ROWS
+FROM
+[Car Transactions]
+
+
+
+WITH
+MEMBER [Measures].[Prev Period Amount] AS
+([Time].[Month].CurrentMember,
+[Measures].[Amount])
+/
+([Time].[Month].CurrentMember.PrevMember,
+[Measures].[Amount]),
+FORMAT_STRING = 'Percent'
+SELECT
+{[Measures].[Amount], [Measures].[Prev Period Amount]} ON COLUMNS,
+[Time].[Month].Members ON ROWS
+FROM
+[Car Transactions]
+
+
+
+WITH
+MEMBER [Measures].[Prev Period Amount] AS
+([Time].[Month].CurrentMember.NextMember,
+[Measures].[Amount])
+SELECT
+{[Measures].[Amount], [Measures].[Prev Period Amount]} ON COLUMNS,
+[Time].[Month].Members ON ROWS
+FROM
+[Car Transactions]
+
